@@ -15,22 +15,22 @@ export const userApi = createApi({
     // Post user login
 
     loginUser: builder.mutation({
-        query: (logUser) => ({
-          url: `/api/users/login`,
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: logUser,
-        }),
+      query: (logUser) => ({
+        url: `/api/users/login`,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: logUser,
       }),
+    }),
 
-      // put user logout
+    // put user logout
 
-      logoutUser: builder.mutation({
-        query: ({id}) => ({
-          url: `/api/users/logout/${id}`,
-          method: "PUT",
-        }),
+    logoutUser: builder.mutation({
+      query: ({ id }) => ({
+        url: `/api/users/logout/${id}`,
+        method: "PUT",
       }),
+    }),
 
     // Get user by id
 
@@ -41,7 +41,10 @@ export const userApi = createApi({
     // Add new user
 
     addNewUser: builder.mutation({
-      query: (newUser) => ({
+      query: (newUser) => (
+        console.log(newUser, "ioioioioio"),
+        
+        {
         url: `/api/users`,
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,36 +55,31 @@ export const userApi = createApi({
     // Update a user
 
     updateUser: builder.mutation({
-        query: ({ id, updateUser }) => {
-          return {
-            url: `/api/users/${id}`,
-            method: 'PUT',
-            // headers: { "Content-Type": "application/json" },
-            body: updateUser,
-          };
-        },
+      query: ({ id, ...data }) => ({
+        url: `/api/users/${id}`,
+        method: "PUT",
+        body: data,
       }),
-      
+    }),
 
     // Delete a user
 
     deleteUser: builder.mutation({
-        query: (id) => ({
-            url: `/api/users/${id}`,
-            method: 'DELETE'
-        })
+      query: (id) => ({
+        url: `/api/users/${id}`,
+        method: 'DELETE'
+      })
     })
-
 
   }),
 });
 
 export const {
-    useGetAllUserQuery, 
-    useLoginUserMutation,
-    useGetAUserByIdQuery,
-    useAddNewUserMutation, 
-    useUpdateUserMutation,
-    useDeleteUserMutation,
-    useLogoutUserMutation,
-  } =  userApi;
+    useGetAllUserQuery,
+  useLoginUserMutation,
+  useGetAUserByIdQuery,
+  useAddNewUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useLogoutUserMutation,
+} = userApi;
