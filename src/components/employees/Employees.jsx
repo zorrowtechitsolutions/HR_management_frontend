@@ -20,8 +20,10 @@ import { useDeleteUserMutation } from "../../app/service/user";
 import CreateEmployeeModal from './CreateEmployee';
 import UpdateEmployeeModal from './UpdateEmployee';
 import DeleteEmployeeModal from './DeleteEmployee';
+import { useNavigate } from "react-router-dom";
 
 const Employees = () => {
+  const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -273,9 +275,9 @@ const Employees = () => {
       setCreateModalOpen(false);
       await refetch();
     } catch (err) {
-  console.log("🔥 FULL ERROR:", err);
-  console.log("🔥 BACKEND MESSAGE:", err?.data || err?.response?.data);
-}
+      console.log("🔥 FULL ERROR:", err);
+      console.log("🔥 BACKEND MESSAGE:", err?.data || err?.response?.data);
+    }
   };
 
   // UPDATE EMPLOYEE
@@ -300,8 +302,8 @@ const Employees = () => {
         lastPromotionDate: updatedEmployee.lastPromotionDate,
         workLocation: updatedEmployee.workLocation,
         skills: updatedEmployee.skills,
-        
-        
+
+
       };
 
       if (updatedEmployee.password) {
@@ -332,6 +334,21 @@ const Employees = () => {
       throw error;
     } finally {
       setDeleteLoading(false);
+    }
+  };
+
+  // Active toggle button
+
+  const handleToggleActive = async (emp) => {
+    try {
+      await updateUser({
+        id: emp._id,
+        isActive: !emp.isActive,
+      }).unwrap();
+
+      await refetch(); // refresh table
+    } catch (error) {
+      console.error("Toggle error:", error);
     }
   };
 
@@ -657,16 +674,29 @@ const Employees = () => {
                 </td>
               </tr>
             )}
-
             {!isLoading && currentEmployees.map((emp) => (
               <tr key={emp._id} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-4 font-medium whitespace-nowrap">
+                <td
+                  onClick={() => {
+                    console.log("CLICK WORKING", emp._id);
+                    navigate(`/employees/${emp._id}`);
+                  }}
+                  className="px-6 py-4 font-medium whitespace-nowrap text-gray-900 cursor-pointer hover:text--600 transition"
+                >
                   {emp.firstName} {emp.lastName}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">{emp.role || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{emp.department || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{emp.mobile || '-'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{emp.joiningDate || '-'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {emp.joiningDate
+                    ? new Date(emp.joiningDate).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
+                    : "-"}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">{emp.email || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{emp.gender || '-'}</td>
                 <td className="px-6 py-4 max-w-xs truncate">{emp.address || '-'}</td>
@@ -680,10 +710,16 @@ const Employees = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs ${emp.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                    }`}>
-                    {emp.isActive ? "Active" : "Inactive"}
-                  </span>
+                  <button
+                    onClick={() => handleToggleActive(emp)}
+                    className={`w-12 h-6 flex items-center rounded-full p-1 transition ${emp.isActive ? "bg-green-500" : "bg-gray-300"
+                      }`}
+                  >
+                    <div
+                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition ${emp.isActive ? "translate-x-6" : "translate-x-0"
+                        }`}
+                    />
+                  </button>
                 </td>
                 <td className="px-6 py-4 flex gap-2">
                   <button

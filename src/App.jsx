@@ -11,6 +11,7 @@ import LeaveManagement from './components/leave/LeaveManagement';
 import Settings from './pages/Settings';
 import Employees from './components/employees/Employees';
 import AttendanceList from './components/Attendance/Attendances';
+import EmployeeProfile from './components/employees/employeeProfile';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -25,6 +26,7 @@ function App() {
         <div className="flex-1 overflow-auto p-6">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/employees/:id" element={<EmployeeProfile />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/employees/attendance" element={<EmployeeAttendance />} />
             <Route path="/leave-management" element={<LeaveManagement />} />
